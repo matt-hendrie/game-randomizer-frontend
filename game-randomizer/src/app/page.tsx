@@ -59,6 +59,7 @@ export default async function Home() {
         </div>
 
         <CrudShowcase />
+        <GetGames />
       </div>
     </main>
   );
@@ -79,6 +80,20 @@ async function CrudShowcase() {
       )}
 
       <CreatePost />
+    </div>
+  );
+}
+
+async function GetGames() {
+  const games = await api.games.getGames.query();
+  return (
+    <div>
+      <h1>Games</h1>
+      <ul>
+        {games.map((game) => (
+          <li key={game.id}>{game.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
