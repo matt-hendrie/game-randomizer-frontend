@@ -17,7 +17,7 @@ const imageSchema = z.object({
     tinyUrl: z.string()
 });
 
-const mainSchema = z.array(
+export const mainSchema = z.array(
     z.object({
         id: z.union([z.null(), z.number()]),
         aliases: z.union([z.null(), z.string()]),
@@ -30,12 +30,14 @@ const mainSchema = z.array(
 
 export const gamesRouter = createTRPCRouter({
     getGames: publicProcedure.query(async () => {
-        const response = await fetch(process.env.BACKEND_URL + "/api/game", {
+        const page = Math.floor(Math.random() * 100);
+        const response = await fetch(`${process.env.BACKEND_URL}/api/game?page=${page}`, {
             headers: {
                 'x-api-key': `${process.env.BACKEND_API_KEY}`
             }
         });
         const games = mainSchema.parse(await response.json());
-        return games;
+        const randomGame = games[Math.floor(Math.random() * games.length)];
+        return randomGame;
     }),
 });

@@ -1,23 +1,25 @@
 import { unstable_noStore as noStore } from "next/cache";
-import Link from "next/link";
 
-import { CreatePost } from "~/app/_components/create-post";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
+import ReloadButton from '~/app/_components/ReloadButton';
+import GameDisplay  from "~/app/_components/GameDisplay";
 
 export default async function Home() {
     noStore();
-    const gamesData = await api.games.getGames.query();
+    const game = await api.games.getGames.query();
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-            <h1 className="text-4xl font-bold mb-4">Games</h1>
-            {gamesData.map((game) => (
-                <div key={game.id} className="mb-4">
-                    <img src={game.image?.smallUrl} className="rounded-lg shadow-lg" />
-                    <h2 className="text-2xl font-semibold mt-2">{game.name}</h2>
-                </div>
-            ))}
+            {!game ? (
+                <div className="loading-indicator"></div>
+            ) : (
+                <>
+                    <h1 className="text-4xl font-bold mb-4">{game.name}</h1>
+                    <GameDisplay game={game}/>
+                    <ReloadButton/>
+                </>
+            )}
         </div>
     );
 }
